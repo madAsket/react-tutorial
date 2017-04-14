@@ -1,13 +1,27 @@
 import express  from 'express';
 import React from "react"
 import ReactDOM from 'react-dom/server'
-import App from "./components/App"
+import {match, RouterContext} from 'react-router'
+import routes from './routes'
 
 const app = express();
 
 app.use((req, res) => {
-    const component = ReactDOM.renderToString(<App />);
-    return res.end(renderHTML(component));
+    match({routes, location:req.url}, (error, redirectLocation, renderProps)=>{
+        if(redirectLocation){
+            return res.redirect(301, redirectLocation.pathname + redirectLocation.search);
+        }
+        if(error){
+            return res.status(500).send(error.message);
+        }
+        if(!renderProps){
+            return res.status(404).send('Not found');
+        }
+        const component = ReactDOM.renderToString(<RouterContext {...renderProps} />);
+
+        return res.end(renderHTML(component));
+    });
+
 });
 
 const assetUrl = process.env.NODE_ENV !== 'production' ? 'http://localhost:8050' : '/';

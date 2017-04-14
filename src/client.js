@@ -1,5 +1,12 @@
 import React from "react"
+import {browserHistory, Router} from 'react-router'
+import routes from './routes'
 import ReactDOM from "react-dom"
-import App from "./components/App"
 
-ReactDOM.render(<App/>, document.getElementById('react-view'));
+const component = (
+    <Router history={browserHistory}>
+        {routes}
+    </Router>
+);
+
+ReactDOM.render(component, document.getElementById('react-view'));
